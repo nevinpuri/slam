@@ -6,7 +6,7 @@ import pypangolin as pn
 class Display(Thread):
     def __init__(self):
         Thread.__init__(self)
-        self._stop = Event
+        self.stop_event = False
 
     def run(self):
         # most definitely needs to go in init function and be class var
@@ -32,6 +32,8 @@ class Display(Thread):
 
 
         while not pn.ShouldQuit():
+            if self.stop_event == True:
+                break
             gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
             gl.glClearColor(1.0, 1.0, 1.0, 1.0)
             dcam.Activate(scam)
@@ -46,7 +48,7 @@ class Display(Thread):
 
 
     def stop(self):
-        self._stop.set()
+        self.stop_event = True
 
     def stopped(self):
-        return self._stop.isSet()
+        return self.stop_event

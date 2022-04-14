@@ -28,6 +28,7 @@ while True:
     key = cv.waitKey()
 
     if key == 113:
+        display.stop()
         quit()
 
 
