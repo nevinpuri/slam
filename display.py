@@ -2,23 +2,20 @@ from threading import Thread, Event
 import numpy as np
 import OpenGL.GL as gl
 import pypangolin as pn
+import matplotlib.pyplot as plt
 
-class Display(Thread):
+class Display(object):
     def __init__(self):
-        Thread.__init__(self)
-        self.stop_event = False
+        pn.CreateWindowAndBind('Thread', 640, 480)
 
-    def run(self):
-        # most definitely needs to go in init function and be class var
-        pn.CreateWindowAndBind('Main', 640, 480)
         gl.glEnable(gl.GL_DEPTH_TEST)
 
-        scam = pn.OpenGlRenderState(
+        self.scam = pn.OpenGlRenderState(
                 pn.ProjectionMatrix(640, 480, 420, 420, 320, 240, 0.1, 1000),
                 pn.ModelViewLookAt(-0, 0.5, -3, 0, 0, 0, pn.AxisDirection.AxisY))
 
-        handler = pn.Handler3D(scam)
-        dcam = (
+        self.handler = pn.Handler3D(self.scam)
+        self.dcam = (
                 pn.CreateDisplay()
                 .SetBounds(
                     pn.Attach(0),
@@ -27,11 +24,14 @@ class Display(Thread):
                     pn.Attach(1),
                     -640/480,
                     )
-                .SetHandler(handler)
+                .SetHandler(self.handler)
                 )
+        self.stop_event = False
 
-
+    def run(self):
+        print("running")
         while not pn.ShouldQuit():
+            print("ok")
             if self.stop_event == True:
                 break
             gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
@@ -45,6 +45,9 @@ class Display(Thread):
             gl.glColor3f(1.0, 0.0, 0.0)
 
             pn.FinishFrame()
+
+        print("quit")
+
 
 
     def stop(self):
