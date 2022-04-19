@@ -3,10 +3,16 @@ import numpy as np
 import OpenGL.GL as gl
 import pypangolin as pn
 import matplotlib.pyplot as plt
+import multiprocessing as mp
 
 class Display(object):
     def __init__(self):
-        pn.CreateWindowAndBind('Thread', 640, 480)
+        q = mp.Queue()
+        p = mp.Process(target=self.run, args=())
+        p.start()
+
+    def run(self):
+        pn.CreateWindowAndBind('Display', 640, 480)
 
         gl.glEnable(gl.GL_DEPTH_TEST)
 
@@ -27,16 +33,12 @@ class Display(object):
                 .SetHandler(self.handler)
                 )
         self.stop_event = False
-
-    def run(self):
-        print("running")
         while not pn.ShouldQuit():
-            print("ok")
             if self.stop_event == True:
                 break
             gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
             gl.glClearColor(1.0, 1.0, 1.0, 1.0)
-            dcam.Activate(scam)
+            self.dcam.Activate(self.scam)
 
             pn.glDrawColouredCube()
 
@@ -55,3 +57,4 @@ class Display(object):
 
     def stopped(self):
         return self.stop_event
+
