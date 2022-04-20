@@ -10,9 +10,44 @@ from matplotlib.widgets import Button
 
 if __name__ == '__main__':
     freeze_support()
+    orb = cv.ORB_create(nfeatures=250, scaleFactor=1.2)
+    bf = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=True)
+
     vid = cv.VideoCapture("0.hevc")
     if vid.isOpened() == False:
         print("Error opening 0")
+
+    while True:
+        status, cur_frame = vid.read()
+        if status == False:
+            break
+
+        cur_frame_gray = cv.cvtColor(cur_frame, cv.COLOR_BGR2GRAY)
+        kp_current = orb.detect(cur_frame_gray, None)
+        kp_current, des_current = orb.compute(cur_frame_gray, kp_current)
+
+        status, next_frame = vid.read()
+        if status == False:
+            break
+
+        next_frame_gray = cv.cvtColor(next_frame, cv.COLOR_BGR2GRAY)
+
+        kp_next = orb.detect(next_frame_gray, None)
+        kp_next, des_next = orb.compute(next_frame_gray, kp_next)
+
+        matches = bf.match(des_current, des_next)
+
+        img3 = cv.drawMatches(cur_frame, kp_current, next_frame, kp_next, matches, None, flags=cv.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+
+        cv.imshow("frame", img3)
+
+        # img2 = cv.drawKeypoints(frame, kp, None, color=(0, 255, 0))
+
+        # cv.imshow("frame", img2)
+        key = cv.waitKey()
+
+        if key == 113:
+            quit()
 
     display = Display()
     print("ok")
