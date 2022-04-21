@@ -11,7 +11,12 @@ from matplotlib.widgets import Button
 if __name__ == '__main__':
     freeze_support()
     orb = cv.ORB_create(nfeatures=250, scaleFactor=1.2)
-    bf = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=True)
+    # bf = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=True)
+    FLANN_INDEX_KDTREE = 1
+    index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
+    search_params = dict(checks = 50)
+    # flann = cv.DescriptorMatcher_create(cv.DescriptorMatcher_FLANNBASED)
+    flann = cv.FlannBasedMatcher(index_params, search_params)
 
     vid = cv.VideoCapture("0.hevc")
     if vid.isOpened() == False:
@@ -23,34 +28,63 @@ if __name__ == '__main__':
             break
 
         cur_frame_gray = cv.cvtColor(cur_frame, cv.COLOR_BGR2GRAY)
-        kp_current = orb.detect(cur_frame_gray, None)
-        kp_current, des_current = orb.compute(cur_frame_gray, kp_current)
+        kp_current, des_current = orb.detectAndCompute(cur_frame_gray, None)
+        # des_current = np.float32(des_current)
 
         status, next_frame = vid.read()
         if status == False:
             break
 
         next_frame_gray = cv.cvtColor(next_frame, cv.COLOR_BGR2GRAY)
+        kp_next, des_next = orb.detectAndCompute(next_frame_gray, None)
+        # des_next = np.float32(des_next)
 
-        kp_next = orb.detect(next_frame_gray, None)
-        kp_next, des_next = orb.compute(next_frame_gray, kp_next)
+        # print(des_current)
+        matches = flann.knnMatch(np.float32(des_current), np.float32(des_next), k=2)
+        # print(matches)
+        matches_mask = [[0, 0] for i in range(len(matches))]
 
-        matches = bf.match(des_current, des_next)
+        good_matches = np.array([])
 
-        img3 = cv.drawMatches(cur_frame, kp_current, next_frame, kp_next, matches, None, flags=cv.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
+        for i, (m, n) in enumerate(matches):
+            if m.distance < 0.7 * n.distance:
+                matches_mask[i] = [1,0]
+                good_matches = np.append(good_matches, [m])
 
-        cv.imshow("frame", img3)
+                """
+                idx1 = item_match.trainIdx
+                idx2 = itemMatch.queryIdx
+                """
+
+        draw_params = dict(
+                matchColor=(0, 255, 0),
+                singlePointColor=(255, 0, 0),
+                matchesMask=matches_mask,
+                flags=cv.DrawMatchesFlags_DEFAULT
+                )
+
+        pre_matches = np.float32([kp_current[m.queryIdx].pt for m in good_matches])
+        cur_matches = np.float32([kp_next[m.trainIdx].pt for m in good_matches])
+
+        homography = cv.findHomography(pre_matches, cur_matches)
+        print(homography)
+
+        img3 = cv.drawMatchesKnn(cur_frame_gray, kp_current, next_frame_gray, kp_next, matches, None, (0, 255, 0), None, None, cv.DrawMatchesFlags_DEFAULT)
+
+        cv.imshow('frame', img3)
+
+        # img3 = cv.drawMatches(cur_frame, kp_current, next_frame, kp_next, matches, None, **draw_params)
+
+        # cv.imshow("frame", img3)
 
         # img2 = cv.drawKeypoints(frame, kp, None, color=(0, 255, 0))
 
         # cv.imshow("frame", img2)
         key = cv.waitKey()
-
         if key == 113:
             quit()
-
-    display = Display()
-    print("ok")
+display = Display()
+print("ok")
 
 """
 img = Img()
