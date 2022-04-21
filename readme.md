@@ -1,0 +1,4 @@
+- do orb
+- get homography
+- we need a map
+- then compute homography
