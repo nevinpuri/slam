@@ -1,5 +1,31 @@
+orb-slam
+- extract orb
+- three threads which run in parallel
+    - tracking
+
+Tracking
+- in charge of localizing (finding features with) a camera with every frame, and deciding when to insert a new keyframe
+- performs a feature matching with previous frame, and optimize using motion only BA (bundle adjustment)
+
+- bundle adjustment is the process of reducing the reprojection error between the expected and the predicted points
+
+    - local mapping
+
+Local Mapping
+- if tracking is lost, place regognition model is used to perform a relocation
+- mapping out those points in a space
+
+    - loop closing
+
+Loop Closing
+- checking if the loop has been closed, as to not update those points
+
+1. get features
+2. detect camera prose
+3. local visibility map - retrieved using covisibility graph
+
 slam
-- multiple threads
+- 3 threads
 - localization gets new keyframe once both mapping and segmentation models are done
     - provides camera features as well as pose
     - generates new 3d points by triangulating corner features and connected corner features
