@@ -32,6 +32,8 @@ if __name__ == "__main__":
             print("continued")
             continue # because prev frame doesn't exist
 
+        good = np.array([])
+
         gray = cv.cvtColor(cur_frame, cv.COLOR_BGR2GRAY)
 
         kp_prev, des_prev = orb.detectAndCompute(prev_frame, None)
@@ -43,6 +45,12 @@ if __name__ == "__main__":
 
         # use float32 because the matcher expects float32, but matches are uint8
         matches = flann.knnMatch(np.float32(des_prev), np.float32(des_current), k=2)
+
+        for i, (m, n) in enumerate(matches):
+            if m.distance < 0.7 * n.distance:
+                good = np.append(good, [m])
+
+        print(good)
 
         img3 = cv.drawKeypoints(cur_frame, kp_current, None, color=(0, 255, 0))
         cv.imshow('frame', img3)
