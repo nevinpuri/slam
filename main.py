@@ -27,19 +27,24 @@ if __name__ == "__main__":
             break
 
         i += 1
-        if not i > 1:
-            prev_frame = cur_frame
-            print("continued")
-            continue # because prev frame doesn't exist
 
         good = np.array([])
 
         gray = cv.cvtColor(cur_frame, cv.COLOR_BGR2GRAY)
 
+        if i <= 1:
+            prev_frame = cur_frame
+            print("continued")
+            continue # because prev frame doesn't exist
+
+        if i % 59 == 0:
+            print(i)
+            prev_frame = gray
+
         if not i % 100 == 0:
             continue
 
-        prev_frame = gray
+        print(i)
 
         kp_prev, des_prev = orb.detectAndCompute(prev_frame, None)
         kp_current, des_current = orb.detectAndCompute(gray, None)
@@ -51,17 +56,31 @@ if __name__ == "__main__":
         # use float32 because the matcher expects float32, but matches are uint8
         matches = flann.knnMatch(np.float32(des_prev), np.float32(des_current), k=2)
 
-        for i, (m, n) in enumerate(matches):
+        for m, n in matches:
             if m.distance < 0.7 * n.distance:
                 good = np.append(good, [m])
 
-        # print(good)
+
+        for m in good:
+            prev_idx = m.queryIdx
+            cur_idx = m.trainIdx
+            (x1, y1) = kp_prev[prev_idx].pt
+            (x2, y2) = kp_current[cur_idx].pt
+            print(f"{x1} - {y1} = {x2} - {y2}")
+        # prev_idx = good[0].queryIdx
+        # cur_idx = good[0].trainIdx
+        # print(f"{prev_idx} - {cur_idx}")
+        # (x1, y1) = kp_prev[prev_idx].pt
+        # (x2, y2) = kp_current[cur_idx].pt
+        # print(f"{x1} - {y1} = {x2} - {y2}")
 
         # img3 = cv.drawKeypoints(cur_frame, kp_current, None, color=(0, 255, 0))
-        img3 = cv.drawMatchesKnn(prev_frame, kp_prev, gray, kp_current, matches, None, (0, 255, 0))
+        img3 = cv.drawMatchesKnn(prev_frame, kp_prev, gray, kp_current, matches[:10], None, (0, 255, 0))
         cv.imshow('frame', img3)
 
-        
+        # prev_frame = gray
+        # continue down here
+
         key = cv.waitKey()
 
         if key == 113:
