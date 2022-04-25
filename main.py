@@ -37,11 +37,11 @@ if __name__ == "__main__":
             print("continued")
             continue # because prev frame doesn't exist
 
-        if i % 59 == 0:
+        if i % 21 == 0:
             print(i)
             prev_frame = gray
 
-        if not i % 100 == 0:
+        if not i % 51 == 0:
             continue
 
         print(i)
