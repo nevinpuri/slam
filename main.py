@@ -36,6 +36,11 @@ if __name__ == "__main__":
 
         gray = cv.cvtColor(cur_frame, cv.COLOR_BGR2GRAY)
 
+        if not i % 100 == 0:
+            continue
+
+        prev_frame = gray
+
         kp_prev, des_prev = orb.detectAndCompute(prev_frame, None)
         kp_current, des_current = orb.detectAndCompute(gray, None)
 
@@ -50,12 +55,12 @@ if __name__ == "__main__":
             if m.distance < 0.7 * n.distance:
                 good = np.append(good, [m])
 
-        print(good)
+        # print(good)
 
-        img3 = cv.drawKeypoints(cur_frame, kp_current, None, color=(0, 255, 0))
+        # img3 = cv.drawKeypoints(cur_frame, kp_current, None, color=(0, 255, 0))
+        img3 = cv.drawMatchesKnn(prev_frame, kp_prev, gray, kp_current, matches, None, (0, 255, 0))
         cv.imshow('frame', img3)
 
-        prev_frame = gray
         
         key = cv.waitKey()
 
