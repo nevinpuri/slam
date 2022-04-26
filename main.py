@@ -13,7 +13,7 @@ if __name__ == "__main__":
     flann = cv.FlannBasedMatcher(index_params, search_params)
 
 
-    vid = cv.VideoCapture("0.hevc")
+    vid = cv.VideoCapture("2.hevc")
     if vid.isOpened() == False:
         print("Error opening")
 
@@ -73,21 +73,16 @@ if __name__ == "__main__":
         old_frame_planar = np.array(old_frame_planar)
         new_frame_planar = np.array(new_frame_planar)
 
-        homography_all = cv.findHomography(old_frame_planar, new_frame_planar, cv.RANSAC)
+        h = cv.findHomography(old_frame_planar, new_frame_planar, cv.RANSAC)
 
-        h = homography_all[0]
+        f, mask = cv.findFundamentalMat(old_frame_planar, new_frame_planar, cv.FM_LMEDS)
 
-        norm = h[0][0] * h[0][0] \
-                + h[1][0] * h[1][0] \
-                + h[2][0] * h[2][0]
+        h = np.array(h[0])
+        f = np.array(f)
 
-        h = h / norm
+        rh = np.sum(h) / (np.sum(h) + np.sum(f))
 
-        yaw_calib = np.arctan(h[0])
-        pitch_calib = np.arctan(h[0] * np.cos(yaw_calib))
-
-        print(yaw_calib)
-        print(pitch_calib)
+        print(rh)
 
         # img3 = cv.drawKeypoints(cur_frame, kp_current, None, color=(0, 255, 0))
         img3 = cv.drawMatchesKnn(prev_frame, kp_prev, gray, kp_current, matches[:10], None, (0, 255, 0))
