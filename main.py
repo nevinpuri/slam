@@ -2,9 +2,11 @@ import numpy as np
 import cv2 as cv
 import OpenGL.GL as gl
 import pypangolin as pn
+from display import Display
 from multiprocessing import freeze_support
 
 if __name__ == "__main__":
+    display = Display()
     freeze_support()
     orb = cv.ORB_create(nfeatures=2000, scaleFactor=1.2)
 
@@ -82,7 +84,13 @@ if __name__ == "__main__":
 
         rh = np.sum(h) / (np.sum(h) + np.sum(f))
 
-        print(rh)
+        chosen = None
+        if rh > 0.45:
+            chosen = h
+        else:
+            chosen = f
+
+        print(chosen)
 
         # img3 = cv.drawKeypoints(cur_frame, kp_current, None, color=(0, 255, 0))
         img3 = cv.drawMatchesKnn(prev_frame, kp_prev, gray, kp_current, matches[:10], None, (0, 255, 0))

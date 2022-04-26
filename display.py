@@ -37,14 +37,15 @@ class Display(object):
             if self.stop_event == True:
                 break
             gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
-            gl.glClearColor(1.0, 1.0, 1.0, 1.0)
+            gl.glClearColor(0.0, 0.0, 0.0, 1.0)
             self.dcam.Activate(self.scam)
 
-            pn.glDrawColouredCube()
-
-            points = np.random.random((100000, 3)) * 10
+            # points = np.random.random((100000, 3)) * 3 - 4
+            points = [[0, 1, 2], [0, 1, 1]]
             gl.glPointSize(2)
             gl.glColor3f(1.0, 0.0, 0.0)
+
+            pn.glDrawPoints(points)
 
             pn.FinishFrame()
 
