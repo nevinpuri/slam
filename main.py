@@ -75,11 +75,19 @@ if __name__ == "__main__":
 
         homography_all = cv.findHomography(old_frame_planar, new_frame_planar, cv.RANSAC)
 
-        homography = homography_all[0]
+        h = homography_all[0]
 
-        norm = homography[0][0] * homography[0][0]
+        norm = h[0][0] * h[0][0] \
+                + h[1][0] * h[1][0] \
+                + h[2][0] * h[2][0]
 
-        print(homography[0][2][0])
+        h = h / norm
+
+        yaw_calib = np.arctan(h[0])
+        pitch_calib = np.arctan(h[0] * np.cos(yaw_calib))
+
+        print(yaw_calib)
+        print(pitch_calib)
 
         # img3 = cv.drawKeypoints(cur_frame, kp_current, None, color=(0, 255, 0))
         img3 = cv.drawMatchesKnn(prev_frame, kp_prev, gray, kp_current, matches[:10], None, (0, 255, 0))
