@@ -6,7 +6,7 @@ from multiprocessing import freeze_support
 
 if __name__ == "__main__":
     freeze_support()
-    orb = cv.ORB_create(nfeatures=250, scaleFactor=1.2)
+    orb = cv.ORB_create(nfeatures=2000, scaleFactor=1.2)
 
     index_params = dict(algorithm=1, trees=5)
     search_params = dict(checks=50)
@@ -28,23 +28,14 @@ if __name__ == "__main__":
 
         i += 1
 
-        good = np.array([])
+        good = []
 
         gray = cv.cvtColor(cur_frame, cv.COLOR_BGR2GRAY)
 
         if i <= 1:
-            prev_frame = cur_frame
+            prev_frame = gray
             print("continued")
             continue # because prev frame doesn't exist
-
-        if i % 21 == 0:
-            print(i)
-            prev_frame = gray
-
-        if not i % 51 == 0:
-            continue
-
-        print(i)
 
         kp_prev, des_prev = orb.detectAndCompute(prev_frame, None)
         kp_current, des_current = orb.detectAndCompute(gray, None)
@@ -58,21 +49,37 @@ if __name__ == "__main__":
 
         for m, n in matches:
             if m.distance < 0.7 * n.distance:
-                good = np.append(good, [m])
+                # good = np.append(good, [m])
+                good.append(m)
 
+        old_frame_planar = []
+        new_frame_planar = []
 
         for m in good:
             prev_idx = m.queryIdx
             cur_idx = m.trainIdx
             (x1, y1) = kp_prev[prev_idx].pt
             (x2, y2) = kp_current[cur_idx].pt
-            print(f"{x1} - {y1} = {x2} - {y2}")
+            old_frame_planar.append((x1, y1))
+            new_frame_planar.append((x2, y2))
+            # print(f"{x1} - {y1} = {x2} - {y2}")
         # prev_idx = good[0].queryIdx
         # cur_idx = good[0].trainIdx
         # print(f"{prev_idx} - {cur_idx}")
         # (x1, y1) = kp_prev[prev_idx].pt
         # (x2, y2) = kp_current[cur_idx].pt
         # print(f"{x1} - {y1} = {x2} - {y2}")
+        # print(np.array(old_frame_planar))
+        old_frame_planar = np.array(old_frame_planar)
+        new_frame_planar = np.array(new_frame_planar)
+
+        homography_all = cv.findHomography(old_frame_planar, new_frame_planar, cv.RANSAC)
+
+        homography = homography_all[0]
+
+        norm = homography[0][0] * homography[0][0]
+
+        print(homography[0][2][0])
 
         # img3 = cv.drawKeypoints(cur_frame, kp_current, None, color=(0, 255, 0))
         img3 = cv.drawMatchesKnn(prev_frame, kp_prev, gray, kp_current, matches[:10], None, (0, 255, 0))
@@ -82,6 +89,8 @@ if __name__ == "__main__":
         # continue down here
 
         key = cv.waitKey()
+
+        prev_frame = gray
 
         if key == 113:
             quit()
