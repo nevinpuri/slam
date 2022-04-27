@@ -80,8 +80,6 @@ if __name__ == "__main__":
         f, mask = cv.findFundamentalMat(old_frame_planar, new_frame_planar, cv.FM_LMEDS)
 
         h = np.array(h[0])
-        print(h)
-        print(f)
         f = np.array(f)
 
         rh = np.sum(h) / (np.sum(h) + np.sum(f))
@@ -92,7 +90,7 @@ if __name__ == "__main__":
         else:
             chosen = f
 
-        # print(chosen)
+        print(chosen)
 
         # img3 = cv.drawKeypoints(cur_frame, kp_current, None, color=(0, 255, 0))
         img3 = cv.drawMatchesKnn(prev_frame, kp_prev, gray, kp_current, matches[:10], None, (0, 255, 0))
