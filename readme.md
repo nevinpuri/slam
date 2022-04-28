@@ -3,6 +3,7 @@
 - we need a map
 - then compute homography
 
+```
 @article{murTRO2015,
   title={{ORB-SLAM}: a Versatile and Accurate Monocular {SLAM} System},
   author={Mur-Artal, Ra\'ul, Montiel, J. M. M. and Tard\'os, Juan D.},
@@ -13,3 +14,4 @@
   doi = {10.1109/TRO.2015.2463671},
   year={2015}
  }
+```
