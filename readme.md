@@ -3,6 +3,7 @@
 - we need a map
 - then compute homography
 - more stuff
+- find bundle adjustment
 
 ```
 @article{murTRO2015,
