@@ -1,4 +1,39 @@
 orb-slam
+
+orb slam needs to provide bundle adjustment with
+- orb tracking
+- no redundency
+- good config with keyframes and points
+- initial estimation of keyframe posts and point locations
+- local map to achieve scalability
+- ability to detect loops
+
+orb slam
+- uses same features for tracking and mapping
+- real time operation
+- loop closing
+- camera relocation
+- essential matrix or homography
+- lots of spawning, little culling
+
+how to
+- track known features and use inverse depth parameterization 
+
+homogeneos coordinates
+- for any non zero number, the triple (xZ, yZ, Z) is homogeneous coordinates
+(1, 2) can be represented by (1, 2, 1) or (2, 4, 2)
+- homogenous coordinates are ratios, if the third is 1 then the coords are cartesian
+
+```
+  @misc{ enwiki:1082498948,
+    author = "{Wikipedia contributors}",
+    title = "Homogeneous coordinates --- {Wikipedia}{,} The Free Encyclopedia",
+    year = "2022",
+    url = "https://en.wikipedia.org/w/index.php?title=Homogeneous_coordinates&oldid=1082498948",
+    note = "[Online; accessed 1-May-2022]"
+  }
+```
+
 - extract orb
 - three threads which run in parallel
     - tracking

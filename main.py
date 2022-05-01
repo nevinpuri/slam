@@ -42,6 +42,8 @@ if __name__ == "__main__":
         kp_prev, des_prev = orb.detectAndCompute(prev_frame, None)
         kp_current, des_current = orb.detectAndCompute(gray, None)
 
+        # print(kp_current[0].angle)
+
         if des_prev.size == 0 or des_current.size == 0:
             print("error: empty descriptions. skipping")
             continue
@@ -94,7 +96,7 @@ if __name__ == "__main__":
 
         # img3 = cv.drawKeypoints(cur_frame, kp_current, None, color=(0, 255, 0))
         img3 = cv.drawMatchesKnn(prev_frame, kp_prev, gray, kp_current, matches[:10], None, (0, 255, 0))
-        cv.imshow('frame', img3)
+        # cv.imshow('frame', img3)
 
         # prev_frame = gray
         # continue down here
