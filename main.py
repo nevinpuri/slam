@@ -79,6 +79,8 @@ if __name__ == "__main__":
 
         h = cv.findHomography(old_frame_planar, new_frame_planar, cv.RANSAC)
 
+        # find intrinsic params as well
+
         f, mask = cv.findFundamentalMat(old_frame_planar, new_frame_planar, cv.FM_LMEDS)
 
         h = np.array(h[0])
