@@ -5,7 +5,22 @@ import pypangolin as pn
 from display import Display
 from multiprocessing import freeze_support
 
+f = 910 # pixels
+
+w = 1164
+h = 874
+
+
+# get focal length in mm
+fx = f / w
+fy = f / h
+
+i_cam = [[fx, 0, 0],
+        [0, fy, 0],
+        [0, 0, 1]]
+
 if __name__ == "__main__":
+    print(i_cam)
     # display = Display()
     freeze_support()
     orb = cv.ORB_create(nfeatures=2000, scaleFactor=1.2)
@@ -78,6 +93,7 @@ if __name__ == "__main__":
         new_frame_planar = np.array(new_frame_planar)
 
         h = cv.findHomography(old_frame_planar, new_frame_planar, cv.RANSAC)
+        # print(h)
 
         # find intrinsic params as well
 
