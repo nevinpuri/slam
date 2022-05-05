@@ -1,3 +1,6 @@
+## slam
+mainly my recreation of orb slam. I started this project to learn, not knowing anything about epipolar geometry or any sort of that stuff, now I know more. Follow along my route. Might write something at the end about monocular slam for people like me who know nothing about math.
+
 - do orb2
 - get homography
 - we need a map
