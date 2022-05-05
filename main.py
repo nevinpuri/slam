@@ -1,8 +1,8 @@
 import numpy as np
 import cv2 as cv
 import OpenGL.GL as gl
-import pypangolin as pn
-from display import Display
+# import pypangolin as pn
+# from display import Display
 from multiprocessing import freeze_support
 
 f = 910 # pixels
@@ -12,11 +12,9 @@ h = 874
 
 
 # get focal length in mm
-fx = f / w
-fy = f / h
 
-i_cam = [[fx, 0, 0],
-        [0, fy, 0],
+i_cam = [[f, 0, 0],
+        [0, f, 0],
         [0, 0, 1]]
 
 if __name__ == "__main__":
@@ -113,15 +111,15 @@ if __name__ == "__main__":
         print(chosen)
 
         # img3 = cv.drawKeypoints(cur_frame, kp_current, None, color=(0, 255, 0))
-        img3 = cv.drawMatchesKnn(prev_frame, kp_prev, gray, kp_current, matches[:10], None, (0, 255, 0))
+        # img3 = cv.drawMatchesKnn(prev_frame, kp_prev, gray, kp_current, matches[:10], None, (0, 255, 0))
         # cv.imshow('frame', img3)
 
         # prev_frame = gray
         # continue down here
 
-        key = cv.waitKey()
+        # key = cv.waitKey()
 
         prev_frame = gray
 
-        if key == 113:
-            quit()
+        # if key == 113:
+        #     quit()
