@@ -28,5 +28,6 @@ ax.scatter(x, y, z)
 
 ax2.scatter(dx, dy)
 
+# ok
 plt.show()
 
