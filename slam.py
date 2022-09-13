@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 
+
 if __name__ == "__main__":
     cap = cv.VideoCapture("0.hevc")
     orb = cv.ORB_create()
@@ -26,6 +27,17 @@ if __name__ == "__main__":
         if prev_frame is None:
             prev_frame = frame
             continue
+
+        wp = int(frame.shape[1] // 2)
+        hp = int(frame.shape[0] // 2)
+
+        i_params = [
+            [910, 0, wp],
+            [0, 910, hp],
+            [0, 0, 1]
+        ]
+
+        print(frame.shape)
 
         kp1, des1 = orb.detectAndCompute(prev_frame, None)
         kp2, des2 = orb.detectAndCompute(frame, None)
